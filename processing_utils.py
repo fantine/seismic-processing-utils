@@ -6,7 +6,7 @@ import numpy as np
 from scipy import signal
 
 
-def _glob(file_pattern: Text) -> List[Text]:
+def get_filenames(file_pattern: Text) -> List[Text]:
   return sorted(glob.glob(os.path.expanduser(file_pattern)))
 
 
@@ -31,18 +31,26 @@ def bandpass(data, low, high, dt, axis=-1, order=6):
   low = low / nyquist
   high = high / nyquist
   sos = signal.butter(order, [low, high], btype='bandpass', output='sos')
-  return signal.sosfiltfilt(sos, data, axis=axis)
+  return np.float32(signal.sosfiltfilt(sos, data, axis=axis))
 
 
 def lowpass(data, high, dt, axis=-1, order=5):
   nyquist = 0.5 / dt
   high = high / nyquist
   sos = signal.butter(order, high, btype='lowpass', output='sos')
-  return signal.sosfiltfilt(sos, data, axis=axis)
+  return np.float32(signal.sosfiltfilt(sos, data, axis=axis))
 
 
 def highpass(data, low, dt, axis=-1, order=5):
   nyquist = 0.5 / dt
   low = low / nyquist
   sos = signal.butter(order, low, btype='highpass', output='sos')
-  return signal.sosfiltfilt(sos, data, axis=axis)
+  return np.float32(signal.sosfiltfilt(sos, data, axis=axis))
+
+
+def decimate(data, q, axis=-1):
+  return np.float32(signal.decimate(data, q=q, axis=axis))
+
+
+def normalize(data, axis=-1):
+  return data / np.std(data, axis=axis, keepdims=True)
