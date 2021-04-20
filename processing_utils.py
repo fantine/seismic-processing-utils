@@ -53,4 +53,10 @@ def decimate(data, q, axis=-1):
 
 
 def normalize(data, axis=-1):
-  return data / np.std(data, axis=axis, keepdims=True)
+  stddev = np.std(data, axis=axis, keepdims=True)
+  return np.divide(data, stddev, out=np.zeros_like(data), where=stddev != 0)
+
+
+def clip_and_rescale(data, min_val, max_val):
+  data = np.clip(data, min_val, max_val)
+  return np.divide((data - min_val), (max_val - min_val))
