@@ -10,6 +10,11 @@ def get_filenames(file_pattern: Text) -> List[Text]:
   return sorted(glob.glob(os.path.expanduser(file_pattern)))
 
 
+def read_lines(filename):
+  with open(filename, 'r') as f:
+    return [line.rstrip() for line in f.readlines()]
+
+
 def get_strain_rate(data: Sequence[float]) -> Sequence[float]:
   """Computes strain rate across the second dimension."""
   return np.pad(data[:, 1:] - data[:, :-1], ((0, 0), (0, 1)), mode='edge')
